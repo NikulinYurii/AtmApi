@@ -3,6 +3,7 @@ package app.service;
 import app.dto.AuthenticationBankCardDTO;
 import app.dto.CreateBankCardDTO;
 import app.dto.TransferDTO;
+import app.exeption.TransferExeption;
 import app.model.BankCard;
 import app.model.User;
 import app.reposotiry.BankCardRepository;
@@ -46,8 +47,7 @@ public class BankCardServiceImpl implements BankCardService {
 
     }
 
-    //todo
-    public boolean transferFromCardToCard(TransferDTO dto) {
+    public boolean transferFromCardToCard(TransferDTO dto) throws TransferExeption {
         BankCard senderCard = bankCardRepository.getBankCardByCardNumber(dto.getSenderCardNumber());
         BankCard recipientCard = bankCardRepository.getBankCardByCardNumber(dto.getRecipientCardNumber());
 
@@ -56,11 +56,16 @@ public class BankCardServiceImpl implements BankCardService {
                 if (senderCard.getScore() >= dto.getAmountForTranster()) {
                     senderCard.setScore(senderCard.getScore() - dto.getAmountForTranster());
                     recipientCard.setScore(recipientCard.getScore() + dto.getAmountForTranster());
-                }//недостатньо коштів для переведення
-            }//не пройшла аутинтифікація
-        }//не існує одна з карток
-
-        return false;
+                    return true;
+                } else {
+                    throw new TransferExeption("there is not enough money to transfer");
+                }
+            } else {
+                throw new TransferExeption("has not passed the authentication");
+            }
+        } else {
+            throw new TransferExeption("there is not one of the cards");
+        }
     }
 
     public List<String> allCards() {

@@ -1,0 +1,66 @@
+POST http://localhost:9000/ATMAPI/createCard
+
+{
+	"user_name": "Yulia",
+	"user_surname": "Gay",
+	"card_number": "0000000000000001",
+	"card_pass": "0000",
+	"user_birthday": "20.11.1996",
+	"sex": "famale",
+	"address":
+		{
+			"country": "UK",
+			"city": "Kyiv",
+			"street": "Peremogi",
+			"number": "33"
+		}
+}
+
+{
+	"user_name": "Yurii",
+	"user_surname": "Nikulin",
+	"card_number": "1000000000000001",
+	"card_pass": "1111",
+	"user_birthday": "22.12.1995",
+	"sex": "male",
+	"address":
+		{
+			"country": "UK",
+			"city": "Kyiv",
+			"street": "Peremogi",
+			"number": "123"
+		}
+}
+
+
+__________________________________________________________________
+
+POST http://localhost:9000/ATMAPI/createCard
+
+{
+	"user_surname": "Gay",
+	"card_number": "0000000000000001",
+	"card_pass": "0000",
+	"user_birthday": "20.11.1996",
+	"sex": "famale",
+	"address":
+		{
+			"country": "UK",
+			"city": "Kyiv",
+			"street": "Peremogi",
+			"number": "33"
+		}
+}
+__________________________________________________________________
+
+POST http://localhost:9000/ATMAPI/authentication
+
+{
+	"cardNumber": "1000000000000001",
+	"userPass": "1111"
+}
+
+{
+	"cardNumber": "1000000000000001",
+	"userPass": "1110"
+}
