@@ -2,12 +2,14 @@ package app.controller;
 
 import app.dto.AuthenticationBankCardDTO;
 import app.dto.CreateBankCardDTO;
+import app.dto.TransferDTO;
 import app.exeption.NullException;
+import app.exeption.TransferExeption;
 import app.exeption.UncorrectCardNamberExeption;
 import app.model.BankCard;
+import app.model.User;
 import app.service.BankCardService;
 import app.validation.ValidatorDto;
-import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,9 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/ATMAPI")
@@ -38,7 +38,7 @@ public class ApiController {
         try {
             validatorDto.valid(createBankCardDTO);
 
-            bankCardService.createBankCard(createBankCardDTO);
+            bankCardService.create(createBankCardDTO);
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.setLocation(ucBilder.path("/ATMAPI/card/{id}").buildAndExpand(createBankCardDTO.getCard_number()).toUri());
             return new ResponseEntity<String>(httpHeaders, HttpStatus.CREATED);
@@ -59,8 +59,19 @@ public class ApiController {
         return new ResponseEntity<BankCard>((bankCard), HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/cards", method = RequestMethod.GET)
+    public ResponseEntity<?> getAllCards() {
+
+        List<BankCard> bankCards = bankCardService.allCards();
+
+        if (bankCards.isEmpty()) {
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<List<BankCard>>(bankCards, HttpStatus.OK);
+    }
+
     @RequestMapping(value = "/authentication", method = RequestMethod.POST)
-    public ResponseEntity<?> authentication(@RequestBody AuthenticationBankCardDTO dto, UriComponentsBuilder ucBilder) {
+    public ResponseEntity<?> authentication(@RequestBody AuthenticationBankCardDTO dto) {
 
         try {
             validatorDto.valid(dto);
@@ -76,4 +87,19 @@ public class ApiController {
             return new ResponseEntity<String>(HttpStatus.valueOf("uncorret card number"));
         }
     }
+
+    @RequestMapping(value = "/transfer", method = RequestMethod.POST)
+    public ResponseEntity<?> transfer(@RequestBody TransferDTO dto, UriComponentsBuilder ucBilder) {
+
+        try {
+            bankCardService.transferFromCardToCard(dto);
+            User user = bankCardService.getCardByNumber(dto.getSenderCardNumber()).getUser();
+            return new ResponseEntity<User>(user, HttpStatus.OK);
+        } catch (TransferExeption transferExeption) {
+            transferExeption.printStackTrace();
+            return new ResponseEntity<String>(HttpStatus.valueOf("transfer problem"));
+        }
+    }
+
+
 }

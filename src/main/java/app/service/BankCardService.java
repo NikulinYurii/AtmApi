@@ -10,13 +10,13 @@ import java.util.List;
 
 public interface BankCardService {
 
-    boolean createBankCard (CreateBankCardDTO dto);
+    boolean create(CreateBankCardDTO dto);
 
-    boolean authenticationBankCard(AuthenticationBankCardDTO dto);
+    boolean authentication(AuthenticationBankCardDTO dto);
 
     boolean transferFromCardToCard(TransferDTO dto) throws TransferExeption;
 
-    List<String> allCards();
+    List<BankCard> allCards();
 
     BankCard getCardByNumber(String number);
 }

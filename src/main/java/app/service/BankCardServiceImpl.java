@@ -8,12 +8,10 @@ import app.model.BankCard;
 import app.model.User;
 import app.reposotiry.BankCardRepository;
 import app.reposotiry.UserRepository;
-import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -25,11 +23,12 @@ public class BankCardServiceImpl implements BankCardService {
     @Autowired
     private UserRepository userRepository;
 
-    public boolean createBankCard(CreateBankCardDTO dto) {
+    private final double defaulrBankCardScore = 10;
 
-        //todo user exist??
+    public boolean create(CreateBankCardDTO dto) {
+
         User user = new User(dto.getUser_name(), dto.getUser_surname(), dto.getUser_birthday(), dto.getSex(), dto.getAddress());
-        BankCard bankCard = new BankCard(dto.getCard_number(), 0, dto.getCard_pass(), user);
+        BankCard bankCard = new BankCard(dto.getCard_number(), defaulrBankCardScore, dto.getCard_pass(), user);
 
         userRepository.save(user);
         bankCardRepository.save(bankCard);
@@ -39,7 +38,7 @@ public class BankCardServiceImpl implements BankCardService {
         return false;
     }
 
-    public boolean authenticationBankCard(AuthenticationBankCardDTO dto) {
+    public boolean authentication(AuthenticationBankCardDTO dto) {
 
         if (cardExits(dto.getCardNumber())) {
             return chekPass(dto.getCardNumber(), dto.getUserPass());
@@ -52,11 +51,17 @@ public class BankCardServiceImpl implements BankCardService {
         BankCard recipientCard = bankCardRepository.getBankCardByCardNumber(dto.getRecipientCardNumber());
 
         if (cardExits(dto.getRecipientCardNumber()) && cardExits(dto.getSenderCardNumber())) {
-            if (authenticationBankCard(new AuthenticationBankCardDTO(dto.getSenderCardNumber(), dto.getSenderPass()))) {
+            if (authentication(new AuthenticationBankCardDTO(dto.getSenderCardNumber(), dto.getSenderPass()))) {
                 if (senderCard.getScore() >= dto.getAmountForTranster()) {
+
                     senderCard.setScore(senderCard.getScore() - dto.getAmountForTranster());
                     recipientCard.setScore(recipientCard.getScore() + dto.getAmountForTranster());
+
+                    update(senderCard);
+                    update(recipientCard);
+
                     return true;
+
                 } else {
                     throw new TransferExeption("there is not enough money to transfer");
                 }
@@ -68,22 +73,23 @@ public class BankCardServiceImpl implements BankCardService {
         }
     }
 
-    public List<String> allCards() {
+    public List<BankCard> allCards() {
 
-        Gson gson = new Gson();
         List<BankCard> bankCards = bankCardRepository.getAllBankCardByOrderByCardNumberAsc();
-        List<String> ress = null;
 
-        for (BankCard bankCard : bankCards) {
-            ress.add(gson.toJson(bankCard));
-        }
-
-        return ress;
+        return bankCards;
     }
 
     @Override
     public BankCard getCardByNumber(String number) {
         return bankCardRepository.getBankCardByCardNumber(number);
+    }
+
+    private void update(BankCard bankCard) {
+
+        bankCardRepository.deleteByCardNumber(bankCard.getCardNumber());
+        bankCardRepository.save(bankCard);
+
     }
 
     private boolean cardExits(String cardNumber) {

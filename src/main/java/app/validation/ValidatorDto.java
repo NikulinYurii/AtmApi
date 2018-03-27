@@ -46,19 +46,4 @@ public class ValidatorDto {
             throw new NullException("pass");
         }
     }
-
-    public void valid(TransferDTO transferDTO) throws UncorrectCardNamberExeption, TransferAmountExeption {
-
-        if (transferDTO.getSenderCardNumber().length() != 16) {
-            throw new UncorrectCardNamberExeption("sender card number length must be 16 ");
-        }
-
-        if (transferDTO.getRecipientCardNumber().length() != 16) {
-            throw new UncorrectCardNamberExeption("recipient card number length must be 16 ");
-        }
-
-        if (transferDTO.getAmountForTranster() <= 0) {
-            throw new TransferAmountExeption("must be > 0");
-        }
-    }
 }
