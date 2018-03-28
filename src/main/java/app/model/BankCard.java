@@ -1,21 +1,18 @@
 package app.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity(name = "bank_cards")
-public class BankCard {
+public class BankCard implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "card_id")
     private int id;
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @OneToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Column(name = "card_number", length = 16)

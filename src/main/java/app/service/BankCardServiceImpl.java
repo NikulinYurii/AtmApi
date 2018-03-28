@@ -3,14 +3,14 @@ package app.service;
 import app.dto.AuthenticationBankCardDTO;
 import app.dto.CreateBankCardDTO;
 import app.dto.TransferDTO;
-import app.exeption.TransferExeption;
+import app.exception.TransferException;
 import app.model.BankCard;
 import app.model.User;
+import app.reposotiry.AddressRepository;
 import app.reposotiry.BankCardRepository;
 import app.reposotiry.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -21,6 +21,8 @@ public class BankCardServiceImpl implements BankCardService {
     private BankCardRepository bankCardRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private AddressRepository addressRepository;
 
     private final double defaultBankCardScore = 10;
 
@@ -30,6 +32,7 @@ public class BankCardServiceImpl implements BankCardService {
         User user = new User(dto.getUser_name(), dto.getUser_surname(), dto.getUser_birthday(), dto.getSex(), dto.getAddress());
         BankCard bankCard = new BankCard(dto.getCard_number(), defaultBankCardScore, dto.getCard_pass(), user);
 
+        addressRepository.save(dto.getAddress());
         userRepository.save(user);
         bankCardRepository.save(bankCard);
 
@@ -48,7 +51,7 @@ public class BankCardServiceImpl implements BankCardService {
     }
 
     @Override
-    public boolean transferFromCardToCard(TransferDTO dto) throws TransferExeption {
+    public boolean transferFromCardToCard(TransferDTO dto) throws TransferException {
         BankCard senderCard = bankCardRepository.getBankCardByCardNumber(dto.getSenderCardNumber());
         BankCard recipientCard = bankCardRepository.getBankCardByCardNumber(dto.getRecipientCardNumber());
 
@@ -65,13 +68,13 @@ public class BankCardServiceImpl implements BankCardService {
                     return true;
 
                 } else {
-                    throw new TransferExeption("there is not enough money to transfer");
+                    throw new TransferException("there is not enough money to transfer");
                 }
             } else {
-                throw new TransferExeption("has not passed the authentication");
+                throw new TransferException("has not passed the authentication");
             }
         } else {
-            throw new TransferExeption("there is not one of the cards");
+            throw new TransferException("there is not one of the cards");
         }
     }
 
@@ -90,12 +93,13 @@ public class BankCardServiceImpl implements BankCardService {
 
     private void update(BankCard bankCard) {
 
-        bankCardRepository.deleteBankCardByCardNumber(bankCard.getCardNumber());
+        bankCardRepository.deleteById(bankCard.getId());
         bankCardRepository.save(bankCard);
 
     }
 
-    private boolean cardExits(String cardNumber) {
+    @Override
+    public boolean cardExits(String cardNumber) {
         BankCard card = bankCardRepository.getBankCardByCardNumber(cardNumber);
 
         if (card != null) {

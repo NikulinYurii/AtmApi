@@ -1,14 +1,10 @@
 package app.model;
 
-
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 @Entity(name = "users")
-public class User {
+public class User implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -27,12 +23,9 @@ public class User {
     @Column(name = "user_sex", nullable = false)
     private String sex;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_address", nullable = false)
+    @OneToOne
+    @JoinColumn(name = "user_address")
     private Address address;
-
-    @OneToMany(targetEntity = BankCard.class, mappedBy = "user", cascade = CascadeType.ALL)
-    private List<BankCard> bankCardList = new ArrayList<BankCard>();
 
     public User() {
     }
@@ -93,14 +86,6 @@ public class User {
         this.address = address;
     }
 
-    public List<BankCard> getBankCardList() {
-        return bankCardList;
-    }
-
-    public void setBankCardList(List<BankCard> bankCardList) {
-        this.bankCardList = bankCardList;
-    }
-
     @Override
     public String toString() {
         return "User{" +
@@ -109,7 +94,6 @@ public class User {
                 ", birthday=" + birthday +
                 ", sex=" + sex +
                 ", address=" + address +
-                ", bankCardList=" + bankCardList +
                 '}';
     }
 }

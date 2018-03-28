@@ -3,15 +3,14 @@ package app.controller;
 import app.dto.AuthenticationBankCardDTO;
 import app.dto.CreateBankCardDTO;
 import app.dto.TransferDTO;
-import app.exeption.NullException;
-import app.exeption.TransferExeption;
-import app.exeption.UncorrectCardNamberExeption;
+import app.exception.NullException;
+import app.exception.TransferException;
+import app.exception.UncorrectCardNumberException;
 import app.model.BankCard;
 import app.model.User;
 import app.service.BankCardService;
 import app.validation.ValidatorDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -34,29 +33,33 @@ public class ApiController {
 
     @RequestMapping(value = "/createCard", method = RequestMethod.POST)
     public ResponseEntity<?> createCard(@RequestBody CreateBankCardDTO createBankCardDTO, UriComponentsBuilder ucBilder) {
-//todo card exist
-        try {
-            validatorDto.valid(createBankCardDTO);
-
-            bankCardService.create(createBankCardDTO);
-            //HttpHeaders httpHeaders = new HttpHeaders();
-            //httpHeaders.setLocation(ucBilder.path("/ATMAPI/card/{id}").buildAndExpand(createBankCardDTO.getCard_number()).toUri());
-            return new ResponseEntity<BankCard>(bankCardService.getCardByNumber(createBankCardDTO.getCard_number())/*httpHeaders*/, HttpStatus.CREATED);
-
-        } catch (UncorrectCardNamberExeption uncorrectCardNumberExeption) {
-            uncorrectCardNumberExeption.printStackTrace();
-            return new ResponseEntity<String>(HttpStatus.valueOf("uncorret card number"));
-        } catch (NullException e) {
-            e.printStackTrace();
-            return new ResponseEntity<String>(HttpStatus.valueOf("some fields are not filled"));
+        if (bankCardService.cardExits(createBankCardDTO.getCard_number())) {
+            return new ResponseEntity<String>(HttpStatus.valueOf("card number exist"));
+        } else {
+            try {
+                validatorDto.valid(createBankCardDTO);
+                bankCardService.create(createBankCardDTO);
+                return new ResponseEntity<BankCard>(bankCardService.getCardByNumber(createBankCardDTO.getCard_number()), HttpStatus.CREATED);
+            } catch (UncorrectCardNumberException uncorrectCardNumberExeption) {
+                uncorrectCardNumberExeption.printStackTrace();
+                return new ResponseEntity<String>(HttpStatus.valueOf("uncorret card number"));
+            } catch (NullException e) {
+                e.printStackTrace();
+                return new ResponseEntity<String>(HttpStatus.valueOf("some fields are not filled"));
+            }
         }
 
     }
 
-    @RequestMapping(value = "/card/{id}", method = RequestMethod.GET)
-    public ResponseEntity<?> getCard(@PathVariable("id") String id) {
-        BankCard bankCard = bankCardService.getCardByNumber(id);
-        return new ResponseEntity<BankCard>((bankCard), HttpStatus.OK);
+    @RequestMapping(value = "/card/{number}", method = RequestMethod.GET)
+    public ResponseEntity<?> getCard(@PathVariable("number") String number) {
+
+        if (bankCardService.cardExits(number)) {
+            BankCard bankCard = bankCardService.getCardByNumber(number);
+            return new ResponseEntity<BankCard>(bankCardService.getCardByNumber(number), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<String>(HttpStatus.valueOf("card number not exist"));
+        }
     }
 
     @RequestMapping(value = "/cards", method = RequestMethod.GET)
@@ -82,8 +85,8 @@ public class ApiController {
         } catch (NullException e) {
             e.printStackTrace();
             return new ResponseEntity<String>(HttpStatus.valueOf("some fields are not filled"));
-        } catch (UncorrectCardNamberExeption uncorrectCardNamberExeption) {
-            uncorrectCardNamberExeption.printStackTrace();
+        } catch (UncorrectCardNumberException uncorrectCardNamberException) {
+            uncorrectCardNamberException.printStackTrace();
             return new ResponseEntity<String>(HttpStatus.valueOf("uncorret card number"));
         }
     }
@@ -95,11 +98,12 @@ public class ApiController {
             bankCardService.transferFromCardToCard(dto);
             User user = bankCardService.getCardByNumber(dto.getSenderCardNumber()).getUser();
             return new ResponseEntity<User>(user, HttpStatus.OK);
-        } catch (TransferExeption transferExeption) {
-            transferExeption.printStackTrace();
-            return new ResponseEntity<String>(HttpStatus.valueOf("transfer problem"));
+        } catch (TransferException transferException) {
+            if (transferException.getMessage().equals("there is not enough money to transfer")) {
+                return new ResponseEntity<String>(HttpStatus.valueOf(406));
+            } else {
+                return new ResponseEntity<String>(HttpStatus.valueOf(401));
+            }
         }
     }
-
-
 }

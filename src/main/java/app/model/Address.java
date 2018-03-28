@@ -2,17 +2,20 @@ package app.model;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
 
 @Entity(name = "addresses")
-public class Address {
+public class Address implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
+    @Column
     private String country;
+    @Column
     private String city;
+    @Column
     private String street;
+    @Column
     private String number;
 
     public Address() {
