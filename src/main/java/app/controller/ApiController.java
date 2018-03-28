@@ -39,9 +39,9 @@ public class ApiController {
             validatorDto.valid(createBankCardDTO);
 
             bankCardService.create(createBankCardDTO);
-            HttpHeaders httpHeaders = new HttpHeaders();
-            httpHeaders.setLocation(ucBilder.path("/ATMAPI/card/{id}").buildAndExpand(createBankCardDTO.getCard_number()).toUri());
-            return new ResponseEntity<String>(httpHeaders, HttpStatus.CREATED);
+            //HttpHeaders httpHeaders = new HttpHeaders();
+            //httpHeaders.setLocation(ucBilder.path("/ATMAPI/card/{id}").buildAndExpand(createBankCardDTO.getCard_number()).toUri());
+            return new ResponseEntity<BankCard>(bankCardService.getCardByNumber(createBankCardDTO.getCard_number())/*httpHeaders*/, HttpStatus.CREATED);
 
         } catch (UncorrectCardNamberExeption uncorrectCardNumberExeption) {
             uncorrectCardNumberExeption.printStackTrace();

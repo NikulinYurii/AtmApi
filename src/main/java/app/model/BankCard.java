@@ -1,6 +1,9 @@
 package app.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity(name = "bank_cards")
 public class BankCard {
@@ -10,6 +13,7 @@ public class BankCard {
     @Column(name = "card_id")
     private int id;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

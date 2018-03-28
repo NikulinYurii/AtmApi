@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-@Transactional
 public class BankCardServiceImpl implements BankCardService {
 
     @Autowired
@@ -23,12 +22,13 @@ public class BankCardServiceImpl implements BankCardService {
     @Autowired
     private UserRepository userRepository;
 
-    private final double defaulrBankCardScore = 10;
+    private final double defaultBankCardScore = 10;
 
+    @Override
     public boolean create(CreateBankCardDTO dto) {
 
         User user = new User(dto.getUser_name(), dto.getUser_surname(), dto.getUser_birthday(), dto.getSex(), dto.getAddress());
-        BankCard bankCard = new BankCard(dto.getCard_number(), defaulrBankCardScore, dto.getCard_pass(), user);
+        BankCard bankCard = new BankCard(dto.getCard_number(), defaultBankCardScore, dto.getCard_pass(), user);
 
         userRepository.save(user);
         bankCardRepository.save(bankCard);
@@ -38,6 +38,7 @@ public class BankCardServiceImpl implements BankCardService {
         return false;
     }
 
+    @Override
     public boolean authentication(AuthenticationBankCardDTO dto) {
 
         if (cardExits(dto.getCardNumber())) {
@@ -46,16 +47,17 @@ public class BankCardServiceImpl implements BankCardService {
 
     }
 
+    @Override
     public boolean transferFromCardToCard(TransferDTO dto) throws TransferExeption {
         BankCard senderCard = bankCardRepository.getBankCardByCardNumber(dto.getSenderCardNumber());
         BankCard recipientCard = bankCardRepository.getBankCardByCardNumber(dto.getRecipientCardNumber());
 
         if (cardExits(dto.getRecipientCardNumber()) && cardExits(dto.getSenderCardNumber())) {
             if (authentication(new AuthenticationBankCardDTO(dto.getSenderCardNumber(), dto.getSenderPass()))) {
-                if (senderCard.getScore() >= dto.getAmountForTranster()) {
+                if (senderCard.getScore() >= dto.getAmountForTransfer()) {
 
-                    senderCard.setScore(senderCard.getScore() - dto.getAmountForTranster());
-                    recipientCard.setScore(recipientCard.getScore() + dto.getAmountForTranster());
+                    senderCard.setScore(senderCard.getScore() - dto.getAmountForTransfer());
+                    recipientCard.setScore(recipientCard.getScore() + dto.getAmountForTransfer());
 
                     update(senderCard);
                     update(recipientCard);
@@ -73,6 +75,7 @@ public class BankCardServiceImpl implements BankCardService {
         }
     }
 
+    @Override
     public List<BankCard> allCards() {
 
         List<BankCard> bankCards = bankCardRepository.getAllBankCardByOrderByCardNumberAsc();
@@ -87,7 +90,7 @@ public class BankCardServiceImpl implements BankCardService {
 
     private void update(BankCard bankCard) {
 
-        bankCardRepository.deleteByCardNumber(bankCard.getCardNumber());
+        bankCardRepository.deleteBankCardByCardNumber(bankCard.getCardNumber());
         bankCardRepository.save(bankCard);
 
     }

@@ -14,6 +14,6 @@ public interface BankCardRepository extends CrudRepository<BankCard, Integer> {
 
     BankCard getBankCardByCardNumber(String cardNumber);
 
-    BankCard deleteByCardNumber(String cardNumber);
+    BankCard deleteBankCardByCardNumber(String cardNumber);
 
 }

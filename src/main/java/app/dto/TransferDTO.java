@@ -4,7 +4,7 @@ public class TransferDTO {
 
     private String senderCardNumber;
     private String recipientCardNumber;
-    private double amountForTranster;
+    private double amountForTransfer;
     private String senderPass;
 
     public TransferDTO() {
@@ -13,7 +13,7 @@ public class TransferDTO {
     public TransferDTO(String senderCardNumber, String recipientCardNumber, double amountForTranster, String senderPass) {
         this.senderCardNumber = senderCardNumber;
         this.recipientCardNumber = recipientCardNumber;
-        this.amountForTranster = amountForTranster;
+        this.amountForTransfer = amountForTranster;
         this.senderPass = senderPass;
     }
 
@@ -33,12 +33,12 @@ public class TransferDTO {
         this.recipientCardNumber = recipientCardNumber;
     }
 
-    public double getAmountForTranster() {
-        return amountForTranster;
+    public double getAmountForTransfer() {
+        return amountForTransfer;
     }
 
-    public void setAmountForTranster(double amountForTranster) {
-        this.amountForTranster = amountForTranster;
+    public void setAmountForTransfer(double amountForTransfer) {
+        this.amountForTransfer = amountForTransfer;
     }
 
     public String getSenderPass() {
