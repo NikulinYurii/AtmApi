@@ -2,46 +2,46 @@ package app.validation;
 
 import app.dto.AuthenticationBankCardDTO;
 import app.dto.CreateBankCardDTO;
-import app.exception.NullException;
+import app.exception.NullFieldException;
 import app.exception.UncorrectCardNumberException;
 
 public class ValidatorDto {
 
-    public void valid(CreateBankCardDTO createBankCardDTO) throws UncorrectCardNumberException, NullPointerException, NullException {
+    public void valid(CreateBankCardDTO createBankCardDTO) throws UncorrectCardNumberException, NullPointerException, NullFieldException {
 
-        if (createBankCardDTO.getUser_name() == null) {
-            throw new NullException("user_name");
+        if (createBankCardDTO.getUserName() == null) {
+            throw new NullFieldException("user_name");
         }
 
-        if (createBankCardDTO.getUser_surname() == null) {
-            throw new NullException("user_surname");
+        if (createBankCardDTO.getUserSurname() == null) {
+            throw new NullFieldException("user_surname");
         }
 
-        if (createBankCardDTO.getCard_number().length() != 16) {
+        if (createBankCardDTO.getCardNumber().length() != 16) {
             throw new UncorrectCardNumberException("length must be 16 ");
         }
 
-        if (createBankCardDTO.getUser_birthday() == null) {
-            throw new NullException("user_birthday");
+        if (createBankCardDTO.getUserBirthday() == null) {
+            throw new NullFieldException("user_birthday");
         }
 
         if (createBankCardDTO.getSex() == null) {
-            throw new NullException("user_sex");
+            throw new NullFieldException("user_sex");
         }
 
         if (createBankCardDTO.getAddress() == null) {
-            throw new NullException("user_address");
+            throw new NullFieldException("user_address");
         }
     }
 
-    public void valid(AuthenticationBankCardDTO authenticationBankCardDTO) throws UncorrectCardNumberException, NullException {
+    public void valid(AuthenticationBankCardDTO authenticationBankCardDTO) throws UncorrectCardNumberException, NullFieldException {
 
         if (authenticationBankCardDTO.getCardNumber().length() != 16) {
             throw new UncorrectCardNumberException("length must be 16 ");
         }
 
         if (authenticationBankCardDTO.getUserPass() == null) {
-            throw new NullException("pass");
+            throw new NullFieldException("pass");
         }
     }
 }

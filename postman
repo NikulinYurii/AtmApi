@@ -1,11 +1,11 @@
 POST http://localhost:9000/ATMAPI/createCard
 
 {
-	"user_name": "Yulia",
-	"user_surname": "Gay",
-	"card_number": "0000000000000001",
-	"card_pass": "0000",
-	"user_birthday": "20.11.1996",
+	"userName": "Yulia",
+	"userSurname": "Gay",
+	"cardNumber": "0000000000000001",
+	"cardPass": "0000",
+	"userBirthday": "20.11.1996",
 	"sex": "famale",
 	"address":
 		{
@@ -17,11 +17,11 @@ POST http://localhost:9000/ATMAPI/createCard
 }
 
 {
-	"user_name": "Yurii",
-	"user_surname": "Nikulin",
-	"card_number": "1000000000000001",
-	"card_pass": "1111",
-	"user_birthday": "22.12.1995",
+	"userName": "Yurii",
+	"userSurname": "Nikulin",
+	"cardNumber": "1000000000000001",
+	"cardPass": "1111",
+	"userBirthday": "22.12.1995",
 	"sex": "male",
 	"address":
 		{
@@ -33,25 +33,6 @@ POST http://localhost:9000/ATMAPI/createCard
 }
 
 
-__________________________________________________________________
-
-POST http://localhost:9000/ATMAPI/createCard
-
-{
-	"user_surname": "Gay",
-	"card_number": "0000000000000001",
-	"card_pass": "0000",
-	"user_birthday": "20.11.1996",
-	"sex": "famale",
-	"address":
-		{
-			"country": "UK",
-			"city": "Kyiv",
-			"street": "Peremogi",
-			"number": "33"
-		}
-}
-__________________________________________________________________
 
 POST http://localhost:9000/ATMAPI/authentication
 
@@ -60,7 +41,18 @@ POST http://localhost:9000/ATMAPI/authentication
 	"userPass": "1111"
 }
 
+
+
+GER http://localhost:9000/ATMAPI/cards
+
+
+
+POST http://localhost:9000/ATMAPI/transfer
+
 {
-	"cardNumber": "1000000000000001",
-	"userPass": "1110"
+	"senderCardNumber": "0000000000000001",
+    "recipientCardNumber": "1000000000000001",
+    "amountForTransfer": 5,
+    "senderPass": "0000"
 }
+

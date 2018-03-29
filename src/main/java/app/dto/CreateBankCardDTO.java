@@ -4,65 +4,65 @@ import app.model.Address;
 
 public class CreateBankCardDTO {
 
-    private String user_name;
-    private String user_surname;
-    private String card_number;
-    private String card_pass;
-    private String user_birthday;
+    private String userName;
+    private String userSurname;
+    private String cardNumber;
+    private String cardPass;
+    private String userBirthday;
     private String sex;
     private Address address;
 
     public CreateBankCardDTO() {
     }
 
-    public CreateBankCardDTO(String user_name, String user_surname, String card_number, String card_pass, String user_birthday, String sex, Address address) {
-        this.user_name = user_name;
-        this.user_surname = user_surname;
-        this.card_number = card_number;
-        this.card_pass = card_pass;
-        this.user_birthday = user_birthday;
+    public CreateBankCardDTO(String userName, String userSurname, String cardNumber, String cardPass, String userBirthday, String sex, Address address) {
+        this.userName = userName;
+        this.userSurname = userSurname;
+        this.cardNumber = cardNumber;
+        this.cardPass = cardPass;
+        this.userBirthday = userBirthday;
         this.sex = sex;
         this.address = address;
     }
 
-    public String getCard_pass() {
-        return card_pass;
+    public String getCardPass() {
+        return cardPass;
     }
 
-    public void setCard_pass(String card_pass) {
-        this.card_pass = card_pass;
+    public void setCardPass(String cardPass) {
+        this.cardPass = cardPass;
     }
 
-    public String getUser_surname() {
-        return user_surname;
+    public String getUserSurname() {
+        return userSurname;
     }
 
-    public void setUser_surname(String user_surname) {
-        this.user_surname = user_surname;
+    public void setUserSurname(String userSurname) {
+        this.userSurname = userSurname;
     }
 
-    public String getUser_name() {
-        return user_name;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUser_name(String user_name) {
-        this.user_name = user_name;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public String getCard_number() {
-        return card_number;
+    public String getCardNumber() {
+        return cardNumber;
     }
 
-    public void setCard_number(String card_number) {
-        this.card_number = card_number;
+    public void setCardNumber(String cardNumber) {
+        this.cardNumber = cardNumber;
     }
 
-    public String getUser_birthday() {
-        return user_birthday;
+    public String getUserBirthday() {
+        return userBirthday;
     }
 
-    public void setUser_birthday(String user_birthday) {
-        this.user_birthday = user_birthday;
+    public void setUserBirthday(String userBirthday) {
+        this.userBirthday = userBirthday;
     }
 
     public String getSex() {

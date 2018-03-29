@@ -9,8 +9,10 @@ import app.model.User;
 import app.reposotiry.AddressRepository;
 import app.reposotiry.BankCardRepository;
 import app.reposotiry.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -29,15 +31,15 @@ public class BankCardServiceImpl implements BankCardService {
     @Override
     public boolean create(CreateBankCardDTO dto) {
 
-        User user = new User(dto.getUser_name(), dto.getUser_surname(), dto.getUser_birthday(), dto.getSex(), dto.getAddress());
-        BankCard bankCard = new BankCard(dto.getCard_number(), defaultBankCardScore, dto.getCard_pass(), user);
+        User user = new User(dto.getUserName(), dto.getUserSurname(), dto.getUserBirthday(), dto.getSex(), dto.getAddress());
+        BankCard bankCard = new BankCard(dto.getCardNumber(), defaultBankCardScore, dto.getCardPass(), user);
 
         addressRepository.save(dto.getAddress());
         userRepository.save(user);
         bankCardRepository.save(bankCard);
 
 
-        if (bankCardRepository.getBankCardByCardNumber(dto.getCard_number()) != null) return true;
+        if (bankCardRepository.getBankCardByCardNumber(dto.getCardNumber()) != null) return true;
         return false;
     }
 
